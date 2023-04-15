@@ -5,8 +5,10 @@ from torchvision.transforms import transforms,InterpolationMode
 import torch
 
 #数据集加载的地址路径还有一些别的超参数
-base_root = r"D:\\REALLY_WANT_TO_Learning\\github_repositories\\0-Model待处理\\数据集\\"
+base_root = r"D:\\REALLY_WANT_TO_Learning\\github_repositories\\0-Model实验平台\\01-Dataset\\"
 dataset_name = r"ChaseDB-1"
+result_dir = r"D:/REALLY_WANT_TO_Learning/github_repositories/0-Model实验平台/02-Result/"
+result_dir = result_dir + "weight/"+dataset_name
 
 #数据集输入的处理过程 将图片放缩至572*572，与论文中的保持一致，同时减少显存的占用
 input_transform = transforms.Compose([

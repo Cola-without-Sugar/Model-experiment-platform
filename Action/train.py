@@ -1,6 +1,11 @@
 import torch
+import time
 from torch import optim
 from torch.utils.data import DataLoader
+from Action.config import result_dir
+from utils.dir_operater import create_dir
+
+
 
 class Segtrain():
     #初始化训练过程中的参数，目前学习率因为是阶梯型变化，所以无法确定，其余想要修改可以根据命令行修改
@@ -17,7 +22,7 @@ class Segtrain():
         self.mask_channels : int = 1
         self.batch_size = batch_size
         self.learning_rate: float = 2.5e-4
-        self.epochs: int = 20
+        self.epochs: int = 1
 
     def train(self):
         model = self.model(self.image_channels,self.mask_channels).to(self.device)
@@ -48,7 +53,15 @@ class Segtrain():
                 epoch_loss += loss.item()
                 step+=1
             print("%d/%d,train_loss:%0.3f" % (step, dataset_size // dataloader.batch_size, loss.item()))
-        torch.save(model.state_dict(),"Result\weight\weights_%d.pth" % epoch)
+        self.save_model(model,epoch,loss.item())
         return model
         
         #里面简单将训练模型得到的参数根据每一轮次保存了下来
+
+    def save_model(self,model,epoch,epoch_loss):
+        create_dir(result_dir)
+        save_time = time.strftime(r'%m-%d')
+        model_name = model.__class__.__name__
+        # 这里保存的是结果的日期-模型名-epoch数-以及最后一个epoch的loss值
+        torch.save(model.state_dict(),result_dir+
+                   "\{0}-{1}-epoch{2}-loss{3}.pth".format(save_time,model_name,epoch,"%.2f"%(epoch_loss)))
